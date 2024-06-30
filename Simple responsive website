@@ -1,0 +1,479 @@
+QUIZ APPLICATION USING JAVA
+package sqlproject;
+
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
+class pagee implements ActionListener{
+	JFrame Jf;	
+	JTextField TF5,TF1,TF2,TF3,TF4;
+	PreparedStatement pr;
+	Connection con;JButton JJ;
+
+	
+	public pagee() {
+		Jf = new JFrame("FUN QUIZ");
+		Jf.setSize(800,1000);
+		
+		JLabel JL1=new JLabel("Username");//Username
+		JLabel JL2=new JLabel("Mail Id");
+		JLabel JL3=new JLabel("Password");
+		JLabel JL4=new JLabel("Confirm Password");
+		JLabel JL5=new JLabel("Mobile No");
+		
+		JL1.setBounds(100,70,300,35);
+		JL2.setBounds(100,140,300,35);
+		JL3.setBounds(100,210,300,35);
+		JL4.setBounds(100,280,300,35);
+		JL5.setBounds(100,350,300,35);
+		
+		Jf.add(JL1);
+		Jf.add(JL2);
+		Jf.add(JL3);
+		Jf.add(JL4);
+		Jf.add(JL5);
+		
+		TF1=new JTextField();
+		TF2=new JTextField();
+		TF3=new JTextField();
+		TF4=new JTextField();
+		TF5=new JTextField();
+		
+		TF1.setBounds(280,70,300,35);
+		TF2.setBounds(280,140,300,35);
+		TF3.setBounds(280,210,300,35);
+		TF4.setBounds(280,280,300,35);
+		TF5.setBounds(280,350,300,35);
+		
+		Jf.add(TF1);
+		Jf.add(TF2);
+		Jf.add(TF3);
+		Jf.add(TF4);
+		Jf.add(TF5);
+		JL1.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		JL2.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		JL3.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		JL4.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		JL5.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		TF1.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		TF2.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		TF3.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		TF4.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		TF5.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		 JJ=new JButton("Register");
+		
+		JJ.setBounds(260,500,190,50);
+		JJ.addActionListener(this);
+		Jf.add(JJ);
+		
+//		JOptionPane.showMessageDialog
+		
+		Jf.setLayout(null);
+		Jf.setVisible(true);
+	
+	}
+
+public void actionPerformed(ActionEvent e) {
+		String name=TF1.getText();
+		String mail=TF2.getText();
+		String Pass=TF3.getText();
+		String Cpass=TF4.getText();
+		String Mob=TF5.getText();
+		String host = "jdbc:mysql://localhost/buggi";
+		String user = "root";
+		String pwd = "";
+		try {
+			con = DriverManager.getConnection(host,user,pwd);
+			pr = con.prepareStatement("insert into Regpagee(Username,email,Password,ConfirmPassword,MobileNo) values(?,?,?,?,?)");
+			pr.setString(1, name);
+			pr.setString(2, mail);
+			pr.setString(3, Pass);
+			pr.setString(4, Cpass);
+			pr.setString(5, Mob);
+			pr.execute();
+			JJ.setEnabled(false);
+	        JOptionPane.showMessageDialog(null, "Registered Successfully!START QUIZ");
+	      
+			Jf.dispose();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			
+			
+	}
+		Newframe OBJ2=new Newframe();
+	}
+}
+public class FinalPro{
+    public static void main(String[] args) {
+//    	Newframe obj1 = new Newframe();
+    	pagee OBJ=new pagee();
+    }}
+package sqlproject;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+
+class Newframe extends FinalPro implements ActionListener{
+	JFrame Nf;JTextField UA1,UA2,UA3,UA4,UA5;
+	JLabel qn1,qn2,qn3,qn4,qn5;JRadioButton op11,op12,op13,op21,op22,op23,op31,op32,op33,op41,op42,op43,op51,op52,op53;
+	String questionText,option1,option2,option3,Chk,Answers;
+	ArrayList<String> qntxt,Optxt,anstxt,Chktxt,ALL;
+	 ButtonGroup B,B1,B2,B3,B4;int count=0;
+	ResultSet rs ;
+	String ANS1,ANS2,ANS3,ANS4,ANS5,ANS6,ANS7,ANS8,ANS9,ANS10,Scoreee,GETT,GETT2;
+	void quizqns() {
+		String host = "jdbc:mysql://localhost/buggi";
+		String user = "root";
+		String pwd = "";
+	    try (Connection con = DriverManager.getConnection(host, user, pwd)
+	            PreparedStatement pr = con.prepareStatement("SELECT * FROM questions")) {
+	        try (ResultSet rs = pr.executeQuery()) {
+	        	qntxt = new ArrayList<String>();//Qns Stored into ARRAYLIST
+	        	Optxt=new ArrayList<String>();//OPTIONS Stored into ARRAYLIST
+	        	anstxt = new ArrayList<String>();//AMSWERS STORED INTO ARRAYLIST
+	        	
+	            while (rs.next()) {
+	                questionText = rs.getString("qn");
+	                option1 = rs.getString("Op1");//ARRAY INTO STRING
+	                option2 = rs.getString("Op2");
+	                option3 = rs.getString("Op3");	
+	                Answers = rs.getString("Ans");
+	          
+	                qntxt.add(questionText);//ARRAY ADDED TO STRING
+	                Optxt.add(option1);
+	                Optxt.add(option2);
+	                Optxt.add(option3);
+	                anstxt.add(Answers);
+	            }
+//	            	System.out.println(anstxt);
+//	            System.out.println(Optxt);
+	        }
+	    } catch (SQLException e1) {
+	        e1.printStackTrace();
+	    }
+	}
+	
+public Newframe() {
+	 quizqns();
+	 Nf=new JFrame("Start the QUIZ! EXPLORE YOUR SKILLS");
+	 Nf.setSize(1000,1000);
+
+	 //QUESTION LABEL
+	 qn1=new JLabel(qntxt.get(0));
+	 qn2=new JLabel(qntxt.get(1));
+	 qn3=new JLabel(qntxt.get(2));
+	 qn4=new JLabel(qntxt.get(3));
+	 qn5=new JLabel(qntxt.get(4));
+	 
+     qn1.setBounds(100,10,700,50);	
+     qn2.setBounds(100,145,700,50);
+     qn3.setBounds(100,280,700,50);
+     qn4.setBounds(100,420,700,50);
+     qn5.setBounds(100,570,700,50);
+     
+     Nf.add(qn1);
+     Nf.add(qn2);
+     Nf.add(qn3);
+     Nf.add(qn4);
+     Nf.add(qn5);
+        qn1.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		qn2.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		qn3.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		qn4.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		qn5.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+                                       
+     op11=new JRadioButton(Optxt.get(0));//OPTION RADIOBUTTONS
+	 op12=new JRadioButton(Optxt.get(1));
+	 op13=new JRadioButton (Optxt.get(2));
+	 
+	 op11.setBounds(100,60,200,20);
+	 op12.setBounds(100,90,200,20);
+	 op13.setBounds(100,120,200,20);
+	 
+	 Nf.add(op11);
+	 Nf.add(op12);
+	 Nf.add(op13);
+	 
+	 op21=new JRadioButton(Optxt.get(3));
+	 op22=new JRadioButton(Optxt.get(4));
+	 op23=new JRadioButton(Optxt.get(5));
+	 
+	 op21.setBounds(100,190,400,20);
+	 op22.setBounds(100,220,400,20);
+	 op23.setBounds(100,250,400,20);
+	 
+	 Nf.add(op21);
+	 Nf.add(op22);
+	 Nf.add(op23);
+	 
+	 op31=new JRadioButton(Optxt.get(6));
+	 op32=new JRadioButton(Optxt.get(7));
+	 op33=new JRadioButton(Optxt.get(8));
+	 
+	 op31.setBounds(100,330,300,20);
+	 op32.setBounds(100,360,300,20);
+	 op33.setBounds(100,390,300,20);
+	 
+	 Nf.add(op31);
+	 Nf.add(op32);
+	 Nf.add(op33);
+	 
+	 op41=new JRadioButton(Optxt.get(9));
+	 op42=new JRadioButton(Optxt.get(10));
+	 op43=new JRadioButton(Optxt.get(11));
+     
+	 op41.setBounds(100,480,300,20);
+	 op42.setBounds(100,510,300,20);
+	 op43.setBounds(100,540,300,20);
+	 
+	 Nf.add(op41);
+	 Nf.add(op42);
+	 Nf.add(op43);
+     
+	 op51=new JRadioButton(Optxt.get(12));
+	 op52=new JRadioButton(Optxt.get(13));
+	 op53=new JRadioButton(Optxt.get(14));
+     
+	 op51.setBounds(100,640,300,20);
+	 op52.setBounds(100,670,300,20);
+	 op53.setBounds(100,700,300,20);
+	 
+	 Nf.add(op51);
+	 Nf.add(op52);
+	 Nf.add(op53);
+	 op11.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op12.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op13.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op21.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op22.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op23.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op31.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op32.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op33.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op41.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op42.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op43.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op51.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op52.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		op53.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+	                            
+	 ButtonGroup B=new ButtonGroup();//RADIO BUTTON INTO BUTTONGROUP/
+	 B.add(op11);
+	 B.add(op12);
+	 B.add(op13);
+	 
+	 ButtonGroup B1=new ButtonGroup();
+	 B1.add(op21);
+	 B1.add(op22);
+	 B1.add(op23);
+
+	 ButtonGroup B2=new ButtonGroup();
+	 B2.add(op31);
+	 B2.add(op32);
+	 B2.add(op33);
+
+	 ButtonGroup B3=new ButtonGroup();
+	 B3.add(op41);
+	 B3.add(op42);
+	 B3.add(op43);
+
+	 ButtonGroup B4=new ButtonGroup();
+	 B4.add(op51);
+	 B4.add(op52);
+	 B4.add(op53);
+
+	 JButton BUTT=new JButton("SUBMIT");
+	 BUTT.setBounds(800,700,100,50);
+	 BUTT.addActionListener(this);
+	 Nf.add(BUTT);
+	 
+	 Nf.setLayout(null);
+	 Nf.setVisible(true);
+	 
+}
+	public void actionPerformed(ActionEvent e) {
+
+                                 //BUTTON GROUP INTO TEXT        
+        if (op11.isSelected()) {
+            ANS1 = op11.getText();
+            System.out.println(ANS1);
+        } else if (op12.isSelected()) {
+            ANS1 = op12.getText();
+            System.out.println(ANS1);
+        } else if (op13.isSelected()) {
+            ANS1 =op13.getText();
+            System.out.println(ANS1);    	
+            }
+      
+        if (op21.isSelected()) {
+            ANS2 = op21.getText();
+            System.out.println(ANS2);
+        } else if (op22.isSelected()) {
+            ANS2 = op22.getText();
+            System.out.println(ANS2);
+        } else if (op23.isSelected()) {
+            ANS2 =op23.getText();
+            System.out.println(ANS2);}
+            
+            if (op31.isSelected()) {
+                ANS3 = op31.getText();
+                System.out.println(ANS3);
+            } else if (op32.isSelected()) {
+                ANS3 = op32.getText();
+                System.out.println(ANS3);
+            } else if (op33.isSelected()) {
+                ANS3 =op33.getText();
+                System.out.println(ANS3);}
+                
+                if (op41.isSelected()) {
+                    ANS4 = op41.getText();
+                    System.out.println(ANS4);
+                } else if (op42.isSelected()) {
+                    ANS4 = op42.getText();
+                    System.out.println(ANS4);
+                } else if (op33.isSelected()) {
+                    ANS4 =op43.getText();
+                    System.out.println(ANS4);
+                }
+                if (op51.isSelected()) {
+                    ANS5 = op51.getText();
+                    System.out.println(ANS5);
+                } else if (op52.isSelected()) {
+                    ANS5 = op52.getText();
+                    System.out.println(ANS5);
+                } else if (op53.isSelected()) {
+                    ANS5 =op43.getText();
+                    System.out.println(ANS5);
+                }
+                                                      //USERANSWERS CHECK WITH CORRECT ANSWERS
+                 
+			      if(ANS1.equals(anstxt.get(0))) {
+			             count++;
+			             System.out.println(count);}
+			              if(ANS2.equals(anstxt.get(1))) {
+					count++;
+					System.out.println(count);}
+			              if(ANS3.equals(anstxt.get(2)) ){
+					count++;
+					System.out.println(count);}
+			              if(ANS4.equals(anstxt.get(3))) {
+					count++;
+					System.out.println(count);}
+			             if(ANS5.equals(anstxt.get(4))) {
+					count++;
+					System.out.println(count);}
+					 Scoreee="Your Score is"+count+"out of 5"; //predefined
+			
+		Score obj3=new Score();
+	}
+				class Score implements ActionListener{
+					JLabel Mar;
+					JCheckBox SHO,again;
+					JFrame marks;
+				
+				public Score() {
+					
+					JFrame marks=new JFrame("Check page");
+					marks.setSize(700,1000);
+					
+					 Mar=new JLabel(" YOUR SCORE IS "+ count+" out of 5!");
+					Mar.setBounds(110,300,400,40);
+					Mar.setFont(new Font("Times New Roman", Font.PLAIN, 30));
+					Mar.setForeground(Color.BLUE);
+					marks.add(Mar);
+					
+					    SHO=new JCheckBox( "Show Answers");
+					 	SHO.setBounds(250,80,300,40);
+						SHO.setForeground(Color.red);
+						SHO.setFont(new Font("Times New Roman", Font.PLAIN, 30));
+						SHO.addActionListener((ActionListener) this);
+						marks.add(SHO);
+						
+						again=new JCheckBox("Try Again");
+						again.setBounds(250,450,200,30);
+						marks.add(again);
+						again.addActionListener(this);
+			        marks.setLayout(null);
+					marks.setVisible(true);}
+			
+					 
+				public void actionPerformed(ActionEvent e) {
+			
+					if (SHO.isSelected()) {
+					GETT = SHO.getText();}
+					
+					
+					else if((again).isSelected()) {
+						GETT=again.getText();
+						Newframe AGAINN =new Newframe();
+					}
+					//RADIO BUTTON INTO BUTTONGROUP/
+					JFrame marks=new JFrame();
+					marks.setSize(400,700);
+					
+						JLabel A1=new JLabel(anstxt.get(0));
+						JLabel A2=new JLabel(anstxt.get(1));
+						JLabel A3=new JLabel(anstxt.get(2));
+						JLabel A4=new JLabel(anstxt.get(3));
+						JLabel A5=new JLabel(anstxt.get(4));
+						 
+					     A1.setBounds(10,5,400,20);	
+					     A2.setBounds(10,30,400,20);
+					     A3.setBounds(10,60,400,20);
+A4.setBounds(10,90,400,20);
+A5.setBounds(10,120,400,20);
+A1.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+A2.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+A3.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+A4.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+A5.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+
+					     marks.add(A1);
+					     marks.add(A2);
+					     marks.add(A3);
+					     marks.add(A4);
+					     marks.add(A5);
+					     
+					marks.setLayout(null);
+					marks.setVisible(true);
+					}
+				}
+				}
+			class main{
+
+	public main(String[]args) {
+		
+    	pagee OBJ=new pagee();
+
+	}
+}
+
+
